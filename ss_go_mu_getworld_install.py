@@ -60,9 +60,10 @@ else:
     first_run_fail('Your distribution not in supported list, please contact getworld@qq.com')
 
 
-def run_cmd(cmd, args=None):
-    if subprocess.call([cmd, args], shell=True) != 0:
-        print_to_file('<<<' + cmd + ' ' + args + '>>> run failed!')
+def run_cmd(cmd, args=' '):
+    tcall_cmd = cmd + ' ' + args
+    if subprocess.call(tcall_cmd, shell=True) != 0:
+        print_to_file('<<<' + tcall_cmd + '>>> run failed!')
 
 
 def depend_install(soft_list):
@@ -70,7 +71,7 @@ def depend_install(soft_list):
 
 
 # install git
-depend_install('git, wget')
+depend_install('git wget')
 
 
 # install redis
@@ -79,10 +80,28 @@ if dis_cmd == 'yum':
     run_cmd(t_cmd)
     t_cmd = "rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-*.rpm"
     run_cmd(t_cmd)
+    run_cmd('yum update -y')
     depend_install('redis')
+    run_cmd('systemctl start redis.service')
+    run_cmd('systemctl enable redis.service')
 elif dis_cmd == 'apt':
     depend_install('redis-server')
+    run_cmd('service redis-server start')
 
+
+# install ss-go-mu-getworld
+def ss_go_install():
+    ss_local_path = '/usr/ss_getworld'
+    ss_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/mu'
+    config_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/config.conf'
+    run_cmd('mkdir ' + ss_local_path)
+    run_cmd('wget -c -P ' + ss_local_path + ' ' + ss_remote_path)
+    run_cmd('wget -c -P ' + ss_local_path + ' ' + config_remote_path)
+
+
+
+
+# auto start
 
 
 error_log.close()
