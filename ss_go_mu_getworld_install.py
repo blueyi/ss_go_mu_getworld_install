@@ -18,6 +18,13 @@ sys_distribution = platform.linux_distribution()[0].lower()
 # print(sys_distribution)
 
 
+def is_list_in_str(tlist, str):
+    for item in tlist:
+        if item in str:
+            return True
+    return False
+
+
 error_log_file = 'install_err.log'
 error_log = open(error_log_file, 'w')
 
@@ -43,10 +50,10 @@ if platform.uname().machine.lower() != 'x86_64':
 
 install_cmd = None
 dis_cmd = None
-if sys_distribution in apt_list:
+if is_list_in_str(apt_list, sys_distribution):
     install_cmd = 'apt-get install '
     dis_cmd = 'apt'
-elif sys_distribution in rpm_list:
+elif is_list_in_str(rpm_list, sys_distribution):
     install_cmd = 'yum install '
     dis_cmd = 'yum'
 else:
