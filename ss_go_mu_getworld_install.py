@@ -6,10 +6,14 @@ import os
 import sys
 
 
-print('*' * 70)
-print('Thanks for the new shadowsocks node you shared to GetWorld.in Group!')
-print('Welcome you join our QQ group(484729827) for more support information!')
-print('*' * 70)
+def welcome_print(msg):
+    print('*' * 70)
+    print('     <<< ' + msg + ' >>>')
+    print('Thanks for the new shadowsocks node you shared to GetWorld.in Group!')
+    print('Welcome you join our QQ group(484729827) for more support information!')
+    print('*' * 70)
+
+welcome_print('Installing shadowsocks server of GetWorld.in')
 
 
 apt_list = ['ubuntu', 'debian']
@@ -147,3 +151,5 @@ def supervisor_install():
 supervisor_install()
 
 error_log.close()
+
+welcome_print('Install Success!')

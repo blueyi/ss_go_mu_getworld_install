@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="72365f00-764c-4148-99bc-1c66bbfe4ebb" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ssserver.conf" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ss_go_mu_getworld_install.py" afterPath="$PROJECT_DIR$/ss_go_mu_getworld_install.py" />
     </list>
     <ignored path="install_ss-go-mu.iws" />
@@ -34,8 +33,8 @@
       <file leaf-file-name="ss_go_mu_getworld_install.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ss_go_mu_getworld_install.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="46">
-              <caret line="126" column="54" selection-start-line="126" selection-start-column="54" selection-end-line="126" selection-end-column="54" />
+            <state relative-caret-position="499">
+              <caret line="154" column="30" selection-start-line="154" selection-start-column="30" selection-end-line="154" selection-end-column="30" />
               <folding>
                 <element signature="e#48#63#0" expanded="true" />
               </folding>
@@ -506,8 +505,8 @@
     <entry file="file://$PROJECT_DIR$/ss_go_mu_install.py" />
     <entry file="file://$PROJECT_DIR$/ss_go_mu_getworld_install.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="126" column="54" selection-start-line="126" selection-start-column="54" selection-end-line="126" selection-end-column="54" />
+        <state relative-caret-position="499">
+          <caret line="154" column="30" selection-start-line="154" selection-start-column="30" selection-end-line="154" selection-end-column="30" />
           <folding>
             <element signature="e#48#63#0" expanded="true" />
           </folding>
