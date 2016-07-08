@@ -53,40 +53,45 @@ if platform.uname().machine.lower() != 'x86_64':
     first_run_fail('This script only support x86_64 system, please contact getworld@qq.com')
 
 
-
 def run_cmd(cmd, args=' '):
     tcall_cmd = cmd + ' ' + args
     p = subprocess.Popen(tcall_cmd, shell=True, stdout=subprocess.PIPE)
-    output = p.communicate()
-    if p.returncode != 0:
+    toutput = p.communicate()[0]
+    if p.returncode != 0 and ('grep' not in tcall_cmd):
         print_to_file('<<< ' + tcall_cmd + '>>> run failed!')
         print("Please contact getworld@qq.com and send install_err.log")
         sys.exit(1)
-    return output
+    return toutput
 
 
 install_cmd = None
 dis_cmd = None
-package_query_cmd = None
 if is_list_in_str(apt_list, sys_distribution):
     install_cmd = 'apt-get install '
     dis_cmd = 'apt'
-    package_query_cmd = 'dpkg -l | grep '
     run_cmd('apt-get update -y')
 elif is_list_in_str(rpm_list, sys_distribution):
     install_cmd = 'yum install '
     dis_cmd = 'yum'
-    package_query_cmd = 'rpm -qa | grep '
     run_cmd('yum update -y')
 else:
     first_run_fail('Your distribution not in supported list, please contact getworld@qq.com')
 
 
+def package_query_cmd(soft):
+    package_query_str = ''
+    if dis_cmd == 'apt':
+        package_query_str = "dpkg --get-selections | grep '\\b" + soft + "\\s*install'"
+    elif dis_cmd == 'yum':
+        package_query_str = "rpm -qa | grep '" + soft + "'"
+    return package_query_str
+
+
 def depend_install(soft_list):
     for soft in soft_list.split():
-        output = run_cmd(package_query_cmd + "'\\b" + soft + "\\b'")
-        if soft in output.__str__():
-            print(output,  '-- You have installed!')
+        toutput = run_cmd(package_query_cmd(soft))
+        if soft in toutput.__str__():
+            print(soft,  '-- You have installed!')
             continue
         run_cmd(install_cmd, soft + ' -y')
 
@@ -97,8 +102,8 @@ depend_install('git wget')
 
 # install redis
 if dis_cmd == 'yum':
-    output = run_cmd(package_query_cmd + "'epel-release-*'")
-    if not 'epel' in output.__str__():
+    output = run_cmd(package_query_cmd("epel-release-*"))
+    if 'epel' not in output.__str__():
         t_cmd = "wget -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/e/"
         run_cmd(t_cmd)
         t_cmd = "rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-*.rpm"
