@@ -18,9 +18,9 @@ sys_distribution = platform.linux_distribution()[0].lower()
 # print(sys_distribution)
 
 
-def is_list_in_str(tlist, str):
+def is_list_in_str(tlist, tstr):
     for item in tlist:
-        if item in str:
+        if item in tstr:
             return True
     return False
 
@@ -63,7 +63,8 @@ else:
 def run_cmd(cmd, args=' '):
     tcall_cmd = cmd + ' ' + args
     if subprocess.call(tcall_cmd, shell=True) != 0:
-        print_to_file('<<<' + tcall_cmd + '>>> run failed!')
+        print_to_file('<<< ' + tcall_cmd + '>>> run failed!')
+        sys.exit(1)
 
 
 def depend_install(soft_list):
@@ -86,18 +87,33 @@ if dis_cmd == 'yum':
     run_cmd('systemctl enable redis.service')
 elif dis_cmd == 'apt':
     depend_install('redis-server')
-    run_cmd('service redis-server start')
+    run_cmd('service redis-server restart')
+
+
+def find_str(tstr, file):
+    with open(file, 'r') as text:
+        for line in text:
+            line = line.lower()
+            if tstr in line:
+                return True
 
 
 # install ss-go-mu-getworld
 def ss_go_install():
-    ss_local_path = '/usr/ss_getworld'
+    ss_local_path = '/usr/ss_getworld/'
     ss_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/mu'
     config_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/config.conf'
     down_file_name = 'ss_go_getworld'
-    run_cmd('mkdir ' + ss_local_path)
-    run_cmd('wget -c -P ' + ss_local_path + ' ' + '-O ' + down_file_name  + ' '+ ss_remote_path)
-    run_cmd('wget -c -P ' + ss_local_path + ' ' + config_remote_path)
+    if os.path.exists(ss_local_path):
+        run_cmd('rm -rf ' + ss_local_path)
+
+    run_cmd('mkdir -p ' + ss_local_path)
+    run_cmd('wget -c -O ' + ss_local_path + down_file_name + ' ' + ss_remote_path)
+    run_cmd('wget -c -N -P ' + ss_local_path + ' ' + config_remote_path)
+    if find_str('sign in', ss_local_path + 'config.conf') or os.path.getsize(ss_local_path + down_file_name) / 1000 < 2000:
+        first_run_fail("You don't have the permission to connect to GetWorld.in group!\n"
+                       "Please contact getworld@qq.com")
+
 
 ss_go_install()
 
@@ -106,13 +122,28 @@ ss_go_install()
 def supervisor_install():
     depend_install('supervisor')
     supervisor_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/ssserver.conf'
-    ubuntu_su_conf_path = '/etc/supervisor/conf.d/'
-    centos_su_conf_path = '/etc/supervisord.d/'
-    ubuntu_cmd = 'wget -c -P ' + ubuntu_su_conf_path + ' ' + supervisor_url
-    centos_cmd = 'wget -c -P ' + centos_su_conf_path + ' ' + '-O ' + 'ssserver.ini' + ' ' + supervisor_url
-    run_cmd(ubuntu_cmd)
-    run_cmd(centos_cmd)
+    down_cmd = ''
+    if dis_cmd == 'apt':
+        ubuntu_su_conf_path = '/etc/supervisor/conf.d/'
+        if not os.path.exists(ubuntu_su_conf_path):
+            run_cmd('mkdir -p ' + ubuntu_su_conf_path)
+        if os.path.isfile(ubuntu_su_conf_path + 'ssserver.conf'):
+            run_cmd('rm -f ' + ubuntu_su_conf_path + 'ssserver.conf')
+        down_cmd = 'wget -c -N -P ' + ubuntu_su_conf_path + ' ' + supervisor_url
+        run_cmd('service supervisor restart')
+    elif dis_cmd == 'yum':
+        centos_su_conf_path = '/etc/supervisord.d/'
+        if not os.path.exists(centos_su_conf_path):
+            run_cmd('mkdir -p ' + centos_su_conf_path)
+        if os.path.isfile(centos_su_conf_path + 'ssserver.ini'):
+            run_cmd('rm -f ' + centos_su_conf_path + 'ssserver.ini')
+        down_cmd = 'wget -c -P ' + centos_su_conf_path + ' ' + '-O ' + 'ssserver.ini' + ' ' + supervisor_url
+        run_cmd('systemctl start supervisord.service')
+        run_cmd('systemctl enable supervisord.service')
 
+    run_cmd(down_cmd)
+    run_cmd('supervisorctl reload')
 
+supervisor_install()
 
 error_log.close()
