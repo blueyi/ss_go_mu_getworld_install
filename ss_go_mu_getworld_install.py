@@ -16,6 +16,11 @@ def welcome_print(msg):
 welcome_print('Installing shadowsocks server of GetWorld.in')
 
 
+def del_self():
+#    run_cmd('rm -f ' + sys.argv[0])
+    pass
+
+
 apt_list = ['ubuntu', 'debian']
 rpm_list = ['fedora', 'centos']
 sys_distribution = platform.linux_distribution()[0].lower()
@@ -38,11 +43,24 @@ def print_to_file(msg, file_opened=error_log):
     file_opened.write(str(msg) + '\n')
 
 
+def run_cmd(cmd, args=' '):
+    tcall_cmd = cmd + ' ' + args
+    p = subprocess.Popen(tcall_cmd, shell=True, stdout=subprocess.PIPE)
+    toutput = p.communicate()[0]
+    if p.returncode != 0 and ('grep' not in tcall_cmd):
+        print_to_file('<<< ' + tcall_cmd + '>>> run failed!')
+        print("Please contact getworld@qq.com and send install_err.log")
+        del_self()
+        sys.exit(1)
+    return toutput
+
+
 def first_run_fail(msg):
     print_to_file('System info:')
     for item in platform.uname():
         print_to_file(item)
     print_to_file(msg)
+    del_self()
     sys.exit(1)
 
 
@@ -51,17 +69,6 @@ if os.geteuid() != 0:
 
 if platform.uname().machine.lower() != 'x86_64':
     first_run_fail('This script only support x86_64 system, please contact getworld@qq.com')
-
-
-def run_cmd(cmd, args=' '):
-    tcall_cmd = cmd + ' ' + args
-    p = subprocess.Popen(tcall_cmd, shell=True, stdout=subprocess.PIPE)
-    toutput = p.communicate()[0]
-    if p.returncode != 0 and ('grep' not in tcall_cmd):
-        print_to_file('<<< ' + tcall_cmd + '>>> run failed!')
-        print("Please contact getworld@qq.com and send install_err.log")
-        sys.exit(1)
-    return toutput
 
 
 install_cmd = None
@@ -177,3 +184,4 @@ supervisor_install()
 error_log.close()
 
 welcome_print('Install Success!')
+del_self()
