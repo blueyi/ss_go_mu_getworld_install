@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="72365f00-764c-4148-99bc-1c66bbfe4ebb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ss_go_mu_getworld_install.py" afterPath="$PROJECT_DIR$/ss_go_mu_getworld_install.py" />
-    </list>
+    <list default="true" id="72365f00-764c-4148-99bc-1c66bbfe4ebb" name="Default" comment="" />
     <ignored path="install_ss-go-mu.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />

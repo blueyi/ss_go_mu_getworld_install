@@ -17,7 +17,7 @@ welcome_print('Installing shadowsocks server of GetWorld.in')
 
 
 def del_self():
-#    run_cmd('rm -f ' + sys.argv[0])
+    run_cmd('rm -f ' + sys.argv[0])
     pass
 
 
