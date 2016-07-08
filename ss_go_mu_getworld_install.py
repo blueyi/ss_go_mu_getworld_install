@@ -94,14 +94,25 @@ def ss_go_install():
     ss_local_path = '/usr/ss_getworld'
     ss_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/mu'
     config_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/config.conf'
+    down_file_name = 'ss_go_getworld'
     run_cmd('mkdir ' + ss_local_path)
-    run_cmd('wget -c -P ' + ss_local_path + ' ' + ss_remote_path)
+    run_cmd('wget -c -P ' + ss_local_path + ' ' + '-O ' + down_file_name  + ' '+ ss_remote_path)
     run_cmd('wget -c -P ' + ss_local_path + ' ' + config_remote_path)
 
-
+ss_go_install()
 
 
 # auto start
+def supervisor_install():
+    depend_install('supervisor')
+    supervisor_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/ssserver.conf'
+    ubuntu_su_conf_path = '/etc/supervisor/conf.d/'
+    centos_su_conf_path = '/etc/supervisord.d/'
+    ubuntu_cmd = 'wget -c -P ' + ubuntu_su_conf_path + ' ' + supervisor_url
+    centos_cmd = 'wget -c -P ' + centos_su_conf_path + ' ' + '-O ' + 'ssserver.ini' + ' ' + supervisor_url
+    run_cmd(ubuntu_cmd)
+    run_cmd(centos_cmd)
+
 
 
 error_log.close()
