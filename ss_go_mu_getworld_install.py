@@ -140,6 +140,7 @@ def ss_go_install():
     if find_str('sign in', ss_local_path + 'config.conf') or os.path.getsize(ss_local_path + down_file_name) / 1000 < 2000:
         first_run_fail("You don't have the permission to connect to GetWorld.in group!\n"
                        "Please contact getworld@qq.com")
+    run_cmd('chmod a+x ' + ss_local_path + down_file_name)
 
 
 ss_go_install()
@@ -164,7 +165,7 @@ def supervisor_install():
             run_cmd('mkdir -p ' + centos_su_conf_path)
         if os.path.isfile(centos_su_conf_path + 'ssserver.ini'):
             run_cmd('rm -f ' + centos_su_conf_path + 'ssserver.ini')
-        down_cmd = 'wget -c -P ' + centos_su_conf_path + ' ' + '-O ' + 'ssserver.ini' + ' ' + supervisor_url
+        down_cmd = 'wget -c -O ' + centos_su_conf_path + 'ssserver.ini' + ' ' + supervisor_url
         run_cmd('systemctl start supervisord.service')
         run_cmd('systemctl enable supervisord.service')
 
