@@ -17,7 +17,7 @@ welcome_print('Installing shadowsocks server of GetWorld.in')
 
 
 def del_self():
-    #    run_cmd('rm -f ' + sys.argv[1])
+    run_cmd('rm -f ' + sys.argv[1])
     pass
 
 
@@ -64,8 +64,8 @@ def first_run_fail(msg):
     sys.exit(1)
 
 
-# if os.geteuid() != 0:
-#    first_run_fail('Please run the script by "root"!')
+if os.geteuid() != 0:
+   first_run_fail('Please run the script by "root"!')
 
 if platform.machine().lower() != 'x86_64':
     first_run_fail('This script only support x86_64 system, please contact getworld@qq.com')
