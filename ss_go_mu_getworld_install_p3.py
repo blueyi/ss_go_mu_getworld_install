@@ -115,6 +115,7 @@ if dis_cmd == 'yum':
         run_cmd(t_cmd)
         t_cmd = "rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-*.rpm"
         run_cmd(t_cmd)
+        run_cmd('rm -rf dl.fedoraproject.org')
     run_cmd('yum update -y')
     depend_install('redis')
     run_cmd('systemctl start redis.service')
@@ -124,8 +125,8 @@ elif dis_cmd == 'apt':
     run_cmd('service redis-server restart')
 
 
-def find_str(tstr, file):
-    with open(file, 'r') as text:
+def find_str(tstr, tfile):
+    with open(tfile, 'r') as text:
         for line in text:
             line = line.lower()
             if tstr in line:
@@ -182,6 +183,15 @@ def supervisor_install():
 supervisor_install()
 
 error_log.close()
+
+is_del_err_file = True
+with open(error_log_file, 'r') as err:
+    for line in err:
+        if len(line) != 0:
+            is_del_err_file = False
+
+if is_del_err_file:
+    run_cmd('rm -f ' + error_log_file)
 
 welcome_print('Install Success!')
 del_self()
