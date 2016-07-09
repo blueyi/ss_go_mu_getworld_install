@@ -184,5 +184,14 @@ supervisor_install()
 
 error_log.close()
 
+is_del_err_file = True
+with open(error_log_file, 'r') as err:
+    for line in err:
+        if len(line) != 0:
+            is_del_err_file = False
+
+if is_del_err_file:
+    run_cmd('rm -f ' + error_log_file)
+
 welcome_print('Install Success!')
 del_self()
