@@ -115,6 +115,7 @@ if dis_cmd == 'yum':
         run_cmd(t_cmd)
         t_cmd = "rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-*.rpm"
         run_cmd(t_cmd)
+        run_cmd('rm -rf dl.fedoraproject.org')
     run_cmd('yum update -y')
     depend_install('redis')
     run_cmd('systemctl start redis.service')
