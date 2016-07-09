@@ -17,7 +17,7 @@ welcome_print('Installing shadowsocks server of GetWorld.in')
 
 
 def del_self():
-    run_cmd('rm -f ' + sys.argv[0])
+    #    run_cmd('rm -f ' + sys.argv[0])
     pass
 
 
@@ -65,10 +65,10 @@ def first_run_fail(msg):
 
 
 if os.geteuid() != 0:
-   first_run_fail('Please run the script by "root"!')
+    first_run_fail('Please run the script by "root"!')
 
-if platform.machine().lower() != 'x86_64':
-    first_run_fail('This script only support x86_64 system, please contact getworld@qq.com')
+# if platform.machine().lower() != 'x86_64':
+#    first_run_fail('This script only support x86_64 system, please contact getworld@qq.com')
 
 
 install_cmd = None
@@ -107,15 +107,29 @@ def depend_install(soft_list):
 depend_install('git wget')
 
 
+def epel_url():
+    os_ver_num = '7'
+    tout = run_cmd('cat /etc/centos-release ')
+    tlist = tout.split()
+    for word in tlist:
+        if word[0].isdigit():
+            os_ver_num = str(word[0])
+    url = 'dl.fedoraproject.org/pub/epel/' + os_ver_num + '/' \
+          + platform.machine() + '/e/'
+    return url
+
+
 # install redis
 if dis_cmd == 'yum':
-    output = run_cmd(package_query_cmd("epel-release-*"))
-    if 'epel' not in output.__str__():
-        t_cmd = "wget -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/e/"
-        run_cmd(t_cmd)
-        t_cmd = "rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-*.rpm"
-        run_cmd(t_cmd)
-        run_cmd('rm -rf dl.fedoraproject.org')
+    if 'centos' in sys_distribution:
+        tepel = epel_url()
+        output = run_cmd(package_query_cmd("epel-release-*"))
+        if 'epel' not in output.__str__():
+            t_cmd = "wget -r --no-parent -A 'epel-release-*.rpm' http://" + tepel
+            run_cmd(t_cmd)
+            t_cmd = "rpm -Uvh " + tepel + "epel-release-*.rpm"
+            run_cmd(t_cmd)
+            run_cmd('rm -rf dl.fedoraproject.org')
     run_cmd('yum update -y')
     depend_install('redis')
     run_cmd('systemctl start redis.service')
@@ -128,8 +142,7 @@ elif dis_cmd == 'apt':
 def find_str(tstr, tfile):
     with open(tfile, 'r') as text:
         for line in text:
-            line = line.lower()
-            if tstr in line:
+            if tstr in line.lower():
                 return True
 
 
