@@ -48,6 +48,9 @@ def run_cmd(cmd, args=' '):
     p = subprocess.Popen(tcall_cmd, shell=True, stdout=subprocess.PIPE)
     toutput = p.communicate()[0]
     if p.returncode != 0 and ('grep' not in tcall_cmd):
+        if os.geteuid() != 0:
+            print_to_file('Please run the script by "root"!')
+            sys.exit(1)
         print_to_file('<<< ' + tcall_cmd + '>>> run failed!')
         print("Please contact getworld@qq.com and send install_err.log")
         del_self()
