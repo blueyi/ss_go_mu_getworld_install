@@ -128,7 +128,7 @@ def centos_ver():
     tlist = tout.split()
     for word in tlist:
         if word[0].isdigit():
-            t_os_ver_num = word[0]
+            t_os_ver_num = int(word[0]))
     return t_os_ver_num
  
 # install redis
@@ -192,10 +192,10 @@ ss_go_install()
 def centos6_install_supervisord():
     run_cmd('yum install python-setuptools')
     run_cmd('easy_install supervisor')
-    down_su_init = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/supervisord'
-    down_su_init_cmd = 'wget -O /etc/rc.d/init.d/supervisord ' + dowm_su_init
-    down_su_conf = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/supervisord.conf'
-    down_su_conf_cmd = 'wget -O /etc/supervisord.conf ' + down_su_conf_cmd
+    down_su_init = 'https://github.com/blueyi/ss_go_mu_getworld_install/raw/master/supervisord'
+    down_su_init_cmd = 'wget -O /etc/rc.d/init.d/supervisord ' + down_su_init
+    down_su_conf = 'https://github.com/blueyi/ss_go_mu_getworld_install/raw/master/supervisord.conf'
+    down_su_conf_cmd = 'wget -O /etc/supervisord.conf ' + down_su_conf
     run_cmd(down_su_init_cmd)
     run_cmd(down_su_conf_cmd)
     run_cmd('chmod 755 /etc/rc.d/init.d/supervisord')
