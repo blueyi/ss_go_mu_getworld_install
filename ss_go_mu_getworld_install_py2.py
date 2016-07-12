@@ -133,6 +133,8 @@ def centos_ver():
  
 
 def centos6_install_redis():
+    if os.path.exists('redis-2.8.4'):
+        run_cmd('rm -rf redis-*')
     depend_install('gcc make tcl')
     redis_v284_url = 'http://download.redis.io/releases/redis-2.8.4.tar.gz'
     run_cmd('wget -c ' + redis_v284_url)
