@@ -112,14 +112,14 @@ depend_install('git wget')
 
 def epel_url(ver_num = 7, mac = 'x86_64'):
     if os_ver_num < ver_num:
-        if machine == 'i686':
-            machine = 'i386'
-            url = 'dl.fedoraproject.org/pub/epel/' + str(os_ver_num) + '/' + machine + '/'
+        if mac == 'i686':
+            mac = 'i386'
+            url = 'dl.fedoraproject.org/pub/epel/' + str(os_ver_num) + '/' + mac + '/'
         else:
-            url = 'dl.fedoraproject.org/pub/epel/' + str(os_ver_num) + '/' + machine + '/' 
+            url = 'dl.fedoraproject.org/pub/epel/' + str(os_ver_num) + '/' + mac + '/' 
     else:
         url = 'dl.fedoraproject.org/pub/epel/' + os_ver_num + '/' \
-                + machine + '/e/'
+                + mac + '/e/'
     return url
 
 def centos_ver():
