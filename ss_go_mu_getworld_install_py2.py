@@ -114,11 +114,14 @@ def epel_url():
     os_ver_num = '7'
     tout = run_cmd('cat /etc/centos-release ')
     tlist = tout.split()
+    machine = platform.machine()
+    if machine == 'i686':
+        machine = 'i386'
     for word in tlist:
         if word[0].isdigit():
             os_ver_num = str(word[0])
     url = 'dl.fedoraproject.org/pub/epel/' + os_ver_num + '/' \
-          + platform.machine() + '/e/'
+          + machine + '/e/'
     return url
 
 
