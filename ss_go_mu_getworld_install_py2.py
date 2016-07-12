@@ -118,7 +118,7 @@ def epel_url(ver_num = 7, mac = 'x86_64'):
         else:
             url = 'dl.fedoraproject.org/pub/epel/' + str(os_ver_num) + '/' + mac + '/' 
     else:
-        url = 'dl.fedoraproject.org/pub/epel/' + os_ver_num + '/' \
+        url = 'dl.fedoraproject.org/pub/epel/' + str(os_ver_num) + '/' \
                 + mac + '/e/'
     return url
 
@@ -128,7 +128,7 @@ def centos_ver():
     tlist = tout.split()
     for word in tlist:
         if word[0].isdigit():
-            t_os_ver_num = int(word[0]))
+            t_os_ver_num = int(word[0])
     return t_os_ver_num
  
 # install redis
