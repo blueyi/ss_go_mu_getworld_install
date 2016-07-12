@@ -93,7 +93,7 @@ def package_query_cmd(soft):
     if dis_cmd == 'apt':
         package_query_str = "dpkg --get-selections | grep '\\b" + soft + "\\s*install'"
     elif dis_cmd == 'yum':
-        package_query_str = "rpm -qa | grep '" + soft + "'"
+        package_query_str = "rpm -qa | grep '\\b" + soft + "'"
     return package_query_str
 
 
