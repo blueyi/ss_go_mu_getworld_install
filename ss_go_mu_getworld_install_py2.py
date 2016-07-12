@@ -131,23 +131,46 @@ def centos_ver():
             t_os_ver_num = int(word[0])
     return t_os_ver_num
  
+
+def centos6_install_redis():
+    depend_install('gcc make tcl')
+    redis_v284_url = 'http://download.redis.io/releases/redis-2.8.4.tar.gz'
+    run_cmd('wget -c ' + redis_v284_url)
+    run_cmd('tar -zxvf redis-2.8.4.tar.gz')
+    os.chdir('redis-2.8.4')
+    run_cmd('make && make install')
+    redis_conf_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/redis.conf'
+    redis_init_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/redis'
+    run_cmd('wget -O /etc/redis.conf ' + redis_conf_url)
+    run_cmd('wget -O /etc/init.d/redis ' + redis_init_url)
+    run_cmd('chmod +x /etc/init.d/redis')
+    run_cmd('chkconfig redis on')
+    run_cmd('service redis start')
+    os.chdir('..')
+    run_cmd('rm -rf redis-*')
+
+
+
 # install redis
 if dis_cmd == 'yum':
     if 'centos' in sys_distribution:
         os_ver_num = centos_ver()
         machine = platform.machine()
-        tepel = epel_url(os_ver_num, machine)
-        output = run_cmd(package_query_cmd("epel-release-*"))
-        if 'epel' not in output.__str__():
-            t_cmd = "wget -r --no-parent -A 'epel-release-*.rpm' http://" + tepel
-            run_cmd(t_cmd)
-            t_cmd = "rpm -Uvh " + tepel + "epel-release-*.rpm"
-            run_cmd(t_cmd)
-            run_cmd('rm -rf dl.fedoraproject.org')
-        run_cmd('yum update -y')
-        depend_install('redis')
-        run_cmd('service redis restart')
-        run_cmd('chkconfig redis on')
+        if os_ver_num < 7:
+            centos6_install_redis()
+        else:
+            tepel = epel_url(os_ver_num, machine)
+            output = run_cmd(package_query_cmd("epel-release-*"))
+            if 'epel' not in output.__str__():
+                t_cmd = "wget -r --no-parent -A 'epel-release-*.rpm' http://" + tepel
+                run_cmd(t_cmd)
+                t_cmd = "rpm -Uvh " + tepel + "epel-release-*.rpm"
+                run_cmd(t_cmd)
+                run_cmd('rm -rf dl.fedoraproject.org')
+            run_cmd('yum update -y')
+            depend_install('redis')
+            run_cmd('service redis restart')
+            run_cmd('chkconfig redis on')
     else:
         run_cmd('yum update -y')
         depend_install('redis')
@@ -190,11 +213,11 @@ def ss_go_install():
 ss_go_install()
 
 def centos6_install_supervisord():
-    run_cmd('yum install python-setuptools')
+    run_cmd('yum install python-setuptools -y')
     run_cmd('easy_install supervisor')
-    down_su_init = 'https://github.com/blueyi/ss_go_mu_getworld_install/raw/master/supervisord'
+    down_su_init = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/supervisord'
     down_su_init_cmd = 'wget -O /etc/rc.d/init.d/supervisord ' + down_su_init
-    down_su_conf = 'https://github.com/blueyi/ss_go_mu_getworld_install/raw/master/supervisord.conf'
+    down_su_conf = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/supervisord.conf'
     down_su_conf_cmd = 'wget -O /etc/supervisord.conf ' + down_su_conf
     run_cmd(down_su_init_cmd)
     run_cmd(down_su_conf_cmd)
@@ -205,6 +228,9 @@ def centos6_install_supervisord():
 def supervisor_install():
     supervisor_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/ssserver.conf'
     down_cmd = ''
+    supervisor_log_path = '/var/log/supervisor/'
+    if not os.path.exists(supervisor_log_path):
+        run_cmd('mkdir -p ' + supervisor_log_path)
     if dis_cmd == 'apt':
         depend_install('supervisor')
         ubuntu_su_conf_path = '/etc/supervisor/conf.d/'
