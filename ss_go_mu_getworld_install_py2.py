@@ -4,6 +4,11 @@ import platform
 import subprocess
 import os
 import sys
+import MySQLdb
+import socket
+import fcntl
+import struct
+
 
 
 def welcome_print(msg):
@@ -76,14 +81,17 @@ if os.geteuid() != 0:
 
 install_cmd = None
 dis_cmd = None
+mysqldb_dep_name = None
 if is_list_in_str(apt_list, sys_distribution):
     install_cmd = 'apt-get install '
     dis_cmd = 'apt'
     run_cmd('apt-get update -y')
+    mysqldb_dep_name = 'python-mysqldb'
 elif is_list_in_str(rpm_list, sys_distribution):
     install_cmd = 'yum install '
     dis_cmd = 'yum'
     run_cmd('yum update -y')
+    mysqldb_dep_name = 'mysql-python'
 else:
     first_run_fail('Your distribution not in supported list, please contact getworld@qq.com')
 
@@ -107,7 +115,7 @@ def depend_install(soft_list):
 
 
 # install git
-depend_install('git wget')
+depend_install('git wget ' + mysqldb_dep_name)
 
 
 def epel_url(ver_num = 7, mac = 'x86_64'):
@@ -224,6 +232,8 @@ def centos6_install_supervisord():
     run_cmd(down_su_init_cmd)
     run_cmd(down_su_conf_cmd)
     run_cmd('chmod 755 /etc/rc.d/init.d/supervisord')
+    run_cmd('chkconfig --add supervisord')
+    run_cmd('chkconfig supervisord on')
 
 
 # auto start
@@ -272,6 +282,67 @@ with open(error_log_file, 'r') as err:
 
 if is_del_err_file:
     run_cmd('rm -f ' + error_log_file)
+
+
+
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,
+        struct.pack('256s', ifname[:15])
+        )[20:24])
+
+local_ip = get_ip_address('eth0')
+
+db = MySQLdb.connect(host="sssql.getworld.in",
+                     user="ss",
+                     passwd="LoveGetWorld2016",
+                     db="shadowsocks",
+                     charset="utf8")
+cur = db.cursor()
+cur.execute("SELECT id, server FROM ss_node")
+server_dict = {}
+for row in cur.fetchall():
+    server_dict[row[1]] = row[0]
+
+def max_id():
+    maxid = 1
+    for se in server_dict.items():
+        if maxid < se[1]:
+            maxid = se[1]
+    return maxid
+
+node_id = max_id() + 1
+
+def insert_ip(node_id, ip_addr, db_cursor, db_table):
+    name = "'"+ ip_addr + "'"
+    ss_type = '1'
+    method = "'aes-128-cfb'"
+    cust_method = '1'
+    traffic_rate = '1'
+    info = "'NULL'"
+    status = "'可用'"
+    offset = '0'
+    sort = str(node_id)
+    insert_command = "INSERT INTO " + db_table + " VALUES(" + str(node_id) + "," + \
+            name + "," + ss_type + "," + name + "," + method + "," + cust_method + "," + \
+            traffic_rate + "," + info + "," + status + "," + offset + "," + sort + ")"
+#    print(insert_command)
+    db_cursor.execute(insert_command)
+
+def del_dup_ip(ip_addr, ser_dic, db_cursor, db_table):
+    del_cmd = "DELETE FROM " + db_table + " WHERE server=" + "'" + ip_addr + "'"
+    if ip_addr in ser_dic:
+        db_cursor.execute(del_cmd)
+
+del_dup_ip(local_ip, server_dict, cur, 'ss_node')
+insert_ip(node_id, local_ip, cur, 'ss_node')
+
+db.commit()
+cur.close()
+db.close()
+
 
 welcome_print('Install Success!')
 del_self()
