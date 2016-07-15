@@ -10,7 +10,6 @@ import fcntl
 import struct
 
 
-
 def welcome_print(msg):
     print('*' * 70)
     print('     <<< ' + msg + ' >>>')
@@ -118,7 +117,7 @@ def depend_install(soft_list):
 depend_install('git wget ' + mysqldb_dep_name)
 
 
-def epel_url(ver_num = 7, mac = 'x86_64'):
+def epel_url(ver_num=7, mac='x86_64'):
     if ver_num < 7:
         if mac == 'i686':
             mac = 'i386'
@@ -129,6 +128,7 @@ def epel_url(ver_num = 7, mac = 'x86_64'):
         url = 'dl.fedoraproject.org/pub/epel/' + str(ver_num) + '/' \
                 + mac + '/e/'
     return url
+
 
 def centos_ver():
     t_os_ver_num = 7
@@ -158,7 +158,6 @@ def centos6_install_redis():
     run_cmd('service redis start')
     os.chdir('..')
     run_cmd('rm -rf redis-*')
-
 
 
 # install redis
@@ -222,6 +221,7 @@ def ss_go_install():
 
 ss_go_install()
 
+
 def centos6_install_supervisord():
     run_cmd('yum install python-setuptools -y')
     run_cmd('easy_install supervisor')
@@ -284,7 +284,6 @@ if is_del_err_file:
     run_cmd('rm -f ' + error_log_file)
 
 
-
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     return socket.inet_ntoa(fcntl.ioctl(
@@ -306,6 +305,7 @@ server_dict = {}
 for row in cur.fetchall():
     server_dict[row[1]] = row[0]
 
+
 def max_id():
     maxid = 1
     for se in server_dict.items():
@@ -315,8 +315,9 @@ def max_id():
 
 node_id = max_id() + 1
 
+
 def insert_ip(node_id, ip_addr, db_cursor, db_table):
-    name = "'"+ ip_addr + "'"
+    name = "'" + ip_addr + "'"
     ss_type = '1'
     method = "'aes-128-cfb'"
     cust_method = '1'
@@ -330,6 +331,7 @@ def insert_ip(node_id, ip_addr, db_cursor, db_table):
             traffic_rate + "," + info + "," + status + "," + offset + "," + sort + ")"
 #    print(insert_command)
     db_cursor.execute(insert_command)
+
 
 def del_dup_ip(ip_addr, ser_dic, db_cursor, db_table):
     del_cmd = "DELETE FROM " + db_table + " WHERE server=" + "'" + ip_addr + "'"
