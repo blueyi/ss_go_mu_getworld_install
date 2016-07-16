@@ -149,8 +149,8 @@ def centos6_install_redis():
     run_cmd('tar -zxvf redis-2.8.4.tar.gz')
     os.chdir('redis-2.8.4')
     run_cmd('make && make install')
-    redis_conf_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/redis.conf'
-    redis_init_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/redis'
+    redis_conf_url = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/redis.conf'
+    redis_init_url = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/redis'
     run_cmd('wget -O /etc/redis.conf ' + redis_conf_url)
     run_cmd('wget -O /etc/init.d/redis ' + redis_init_url)
     run_cmd('chmod +x /etc/init.d/redis')
@@ -202,10 +202,10 @@ def ss_go_install():
     ss_remote_path = ''
     ss_local_path = '/usr/ss_getworld/'
     if platform.machine().lower() == 'x86_64':
-        ss_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/mu_x64'
+        ss_remote_path = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/mu_x64'
     else:
-        ss_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/mu_x86'
-    config_remote_path = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/config.conf'
+        ss_remote_path = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/mu_x86'
+    config_remote_path = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/config.conf'
     down_file_name = 'ss_go_getworld'
     if os.path.exists(ss_local_path):
         run_cmd('rm -rf ' + ss_local_path)
@@ -322,9 +322,9 @@ modify_mu_key(mu_key, ss_config_file_path)
 def centos6_install_supervisord():
     run_cmd('yum install python-setuptools -y')
     run_cmd('easy_install supervisor')
-    down_su_init = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/supervisord'
+    down_su_init = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/supervisord'
     down_su_init_cmd = 'wget -O /etc/rc.d/init.d/supervisord ' + down_su_init
-    down_su_conf = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/supervisord.conf'
+    down_su_conf = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/supervisord.conf'
     down_su_conf_cmd = 'wget -O /etc/supervisord.conf ' + down_su_conf
     run_cmd(down_su_init_cmd)
     run_cmd(down_su_conf_cmd)
@@ -335,7 +335,7 @@ def centos6_install_supervisord():
 
 # auto start
 def supervisor_install():
-    supervisor_url = 'https://gitlab.com/getworld/ss_go_mu_getworld_server/raw/master/ssserver.conf'
+    supervisor_url = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/ssserver.conf'
     down_cmd = ''
     supervisor_log_path = '/var/log/supervisor/'
     if not os.path.exists(supervisor_log_path):
