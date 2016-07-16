@@ -223,15 +223,28 @@ ss_go_install()
 
 
 # modify ss config and add node to db
+local_ip = '127.0.0.1'
+
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,
-        struct.pack('256s', ifname[:15])
-        )[20:24])
+    try:
+        return socket.inet_ntoa(fcntl.ioctl(
+                s.fileno(),
+                0x8915,
+                struct.pack('256s', ifname[:15])
+                )[20:24])
+    except :
+        ips = run_cmd("LANG=C ifconfig | grep \"inet addr\" | grep -v \"127.0.0.1\" | awk -F \":\" '{print $2}' | awk '{print $1}'")
+        return ips
+    return '127.0.0.1'
 
-local_ip = get_ip_address('eth0')
+net_list = ['eth0', 'venet0:0']
+for net_name in net_list:
+    realip = get_ip_address(net_name)
+    if realip != '127.0.0.1' and len(realip) > 7:
+        local_ip = realip
+        break
+
 
 db = MySQLdb.connect(host="sssql.getworld.in",
                      user="ss",
