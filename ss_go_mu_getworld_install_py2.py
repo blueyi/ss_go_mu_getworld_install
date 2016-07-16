@@ -296,7 +296,7 @@ def del_dup_ip(ip_addr, ser_dic, db_cursor, db_table):
     if ip_addr in ser_dic:
         db_cursor.execute(del_cmd)
 
-del_dup_ip(local_ip, server_dict, cur, 'ss_node')
+# del_dup_ip(local_ip, server_dict, cur, 'ss_node')
 insert_ip(node_id, local_ip, cur, 'ss_node')
 
 db.commit()
