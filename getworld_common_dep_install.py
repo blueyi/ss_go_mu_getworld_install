@@ -13,7 +13,7 @@ import sys
 
 
 def del_self():
-#    run_cmd('rm -f ' + sys.argv[0])
+    run_cmd('rm -f ' + sys.argv[0])
     pass
 
 apt_list = ['ubuntu', 'debian']
