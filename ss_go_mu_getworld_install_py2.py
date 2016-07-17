@@ -246,11 +246,16 @@ for net_name in net_list:
         break
 
 
-db = MySQLdb.connect(host="sssql.getworld.in",
+try:
+    db = MySQLdb.connect(host="sssql.getworld.in",
                      user="ss",
                      passwd="LoveGetWorld2016",
                      db="shadowsocks",
                      charset="utf8")
+except:
+    first_run_fail("You don't have the permission to connect to GetWorld.in group db!\n"
+                       "Please contact getworld@qq.com")
+
 cur = db.cursor()
 cur.execute("SELECT id, server FROM ss_node")
 server_dict = {}
