@@ -116,7 +116,6 @@ def depend_install(soft_list):
 # install git
 # depend_install('git wget ' + mysqldb_dep_name)
 
-
 def epel_url(ver_num=7, mac='x86_64'):
     if ver_num < 7:
         if mac == 'i686':
@@ -145,14 +144,14 @@ def centos6_install_redis():
         run_cmd('rm -rf redis-*')
     depend_install('gcc make tcl')
     redis_v284_url = 'http://download.redis.io/releases/redis-2.8.4.tar.gz'
-    run_cmd('wget -c ' + redis_v284_url)
+    run_cmd('wget --no-check-certificate -c ' + redis_v284_url)
     run_cmd('tar -zxvf redis-2.8.4.tar.gz')
     os.chdir('redis-2.8.4')
     run_cmd('make && make install')
     redis_conf_url = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/redis.conf'
     redis_init_url = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/redis'
-    run_cmd('wget -O /etc/redis.conf ' + redis_conf_url)
-    run_cmd('wget -O /etc/init.d/redis ' + redis_init_url)
+    run_cmd('wget --no-check-certificate -O /etc/redis.conf ' + redis_conf_url)
+    run_cmd('wget --no-check-certificate -O /etc/init.d/redis ' + redis_init_url)
     run_cmd('chmod +x /etc/init.d/redis')
     run_cmd('chkconfig redis on')
     run_cmd('service redis start')
@@ -171,7 +170,7 @@ if dis_cmd == 'yum':
             tepel = epel_url(os_ver_num, machine)
             output = run_cmd(package_query_cmd("epel-release-*"))
             if 'epel' not in output.__str__():
-                t_cmd = "wget -r --no-parent -A 'epel-release-*.rpm' http://" + tepel
+                t_cmd = "wget --no-check-certificate -r --no-parent -A 'epel-release-*.rpm' http://" + tepel
                 run_cmd(t_cmd)
                 t_cmd = "rpm -Uvh " + tepel + "epel-release-*.rpm"
                 run_cmd(t_cmd)
@@ -211,8 +210,8 @@ def ss_go_install():
         run_cmd('rm -rf ' + ss_local_path)
 
     run_cmd('mkdir -p ' + ss_local_path)
-    run_cmd('wget -c -O ' + ss_local_path + down_file_name + ' ' + ss_remote_path)
-    run_cmd('wget -c -N -P ' + ss_local_path + ' ' + config_remote_path)
+    run_cmd('wget --no-check-certificate -c -O ' + ss_local_path + down_file_name + ' ' + ss_remote_path)
+    run_cmd('wget --no-check-certificate -c -N -P ' + ss_local_path + ' ' + config_remote_path)
     if find_str('sign in', ss_local_path + 'config.conf') or os.path.getsize(ss_local_path + down_file_name) / 1000 < 2000:
         first_run_fail("You don't have the permission to connect to GetWorld.in group!\n"
                        "Please contact getworld@qq.com")
@@ -341,9 +340,9 @@ def centos6_install_supervisord():
     run_cmd('yum install python-setuptools -y')
     run_cmd('easy_install supervisor')
     down_su_init = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/supervisord'
-    down_su_init_cmd = 'wget -O /etc/rc.d/init.d/supervisord ' + down_su_init
+    down_su_init_cmd = 'wget --no-check-certificate -O /etc/rc.d/init.d/supervisord ' + down_su_init
     down_su_conf = 'https://bitbucket.org/getworld/ss_go_mu_getworld_server/raw/master/supervisord.conf'
-    down_su_conf_cmd = 'wget -O /etc/supervisord.conf ' + down_su_conf
+    down_su_conf_cmd = 'wget --no-check-certificate -O /etc/supervisord.conf ' + down_su_conf
     run_cmd(down_su_init_cmd)
     run_cmd(down_su_conf_cmd)
     run_cmd('chmod 755 /etc/rc.d/init.d/supervisord')
@@ -365,7 +364,7 @@ def supervisor_install():
             run_cmd('mkdir -p ' + ubuntu_su_conf_path)
         if os.path.isfile(ubuntu_su_conf_path + 'ssserver.conf'):
             run_cmd('rm -f ' + ubuntu_su_conf_path + 'ssserver.conf')
-        down_cmd = 'wget -c -N -P ' + ubuntu_su_conf_path + ' ' + supervisor_url
+        down_cmd = 'wget --no-check-certificate -c -N -P ' + ubuntu_su_conf_path + ' ' + supervisor_url
         run_cmd('service supervisor restart')
     elif dis_cmd == 'yum':
         centos_su_conf_path = '/etc/supervisord.d/'
@@ -373,7 +372,7 @@ def supervisor_install():
             run_cmd('mkdir -p ' + centos_su_conf_path)
         if os.path.isfile(centos_su_conf_path + 'ssserver.ini'):
             run_cmd('rm -f ' + centos_su_conf_path + 'ssserver.ini')
-        down_cmd = 'wget -c -O ' + centos_su_conf_path + 'ssserver.ini' + ' ' + supervisor_url
+        down_cmd = 'wget --no-check-certificate -c -O ' + centos_su_conf_path + 'ssserver.ini' + ' ' + supervisor_url
         if centos_ver() < 7:
             centos6_install_supervisord()
             run_cmd('service supervisord restart')
